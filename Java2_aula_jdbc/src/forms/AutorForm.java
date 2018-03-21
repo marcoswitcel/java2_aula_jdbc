@@ -145,7 +145,12 @@ public class AutorForm extends javax.swing.JFrame {
         autor.setNome(txtNome.getText());
         
         try {
-            autorDAO.save(autor);
+            if (mode.equals("INS")) {
+               autorDAO.save(autor);
+            } else if (mode.equals("UPD")) {
+                autorDAO.update(autor);
+            }
+            
         } catch (SQLException ex) {
             System.out.println("Erro de SQL");
             JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -187,6 +192,7 @@ public class AutorForm extends javax.swing.JFrame {
         });
     }
 
+    private String mode = "INS";
     private AutorDAO autorDAO;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
