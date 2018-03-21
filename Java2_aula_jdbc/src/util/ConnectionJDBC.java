@@ -15,7 +15,7 @@ public class ConnectionJDBC {
 
     public static Connection getConnection() throws Exception {
 
-        if (connection != null) {
+        if (connection == null) {
             System.out.println("Iniciando...");
 
             try {

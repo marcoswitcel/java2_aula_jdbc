@@ -26,7 +26,7 @@ public class AutorDAO {
     }
     
     public void save(Autor autor) throws SQLException {
-        String SQL = "INSERT INTO AUTOR (AUTOR) VALUES (?)";
+        String SQL = "INSERT INTO AUTOR (NOME) VALUES (?)";
         PreparedStatement p = connection.prepareStatement(SQL);
         p.setString(1, autor.getNome());
         p.execute();
