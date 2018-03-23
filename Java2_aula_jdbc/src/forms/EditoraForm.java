@@ -5,27 +5,27 @@
  */
 package forms;
 
-import dao.AutorDAO;
+import dao.EditoraDAO;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import model.Autor;
+import model.Editora;
 
 /**
  *
  * @author jw004626
  */
-public class AutorForm extends javax.swing.JFrame {
+public class EditoraForm extends javax.swing.JFrame {
 
     /**
      * Creates new form AutorForm
      */
-    public AutorForm() {
+    public EditoraForm() {
         initComponents();
         try {
-            autorDAO = new AutorDAO();
+            editoraDAO = new EditoraDAO();
         } catch (Exception ex) {
             System.out.println("Não conectou!");
         }
@@ -50,6 +50,8 @@ public class AutorForm extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        txtMunicipio = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -58,7 +60,7 @@ public class AutorForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Autor ID");
+        jLabel1.setText("Editora ID");
 
         jLabel2.setText("Nome");
 
@@ -85,17 +87,17 @@ public class AutorForm extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "id", "nome"
+                "id", "nome", "municipio"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -108,6 +110,14 @@ public class AutorForm extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
+
+        txtMunicipio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMunicipioActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Municipio");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -124,17 +134,22 @@ public class AutorForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(txtId)))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtMunicipio, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                                        .addComponent(txtId)))))))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -148,7 +163,11 @@ public class AutorForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -162,17 +181,21 @@ public class AutorForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Autor autor = new Autor();
-        String id = txtId.getText();
-        id = (id.equals("")) ? "0" : id;
-        autor.setAutor_id(Integer.parseInt(id));
-        autor.setNome(txtNome.getText());
+        Editora editora = new Editora();
+        try {
+            editora.setEditora_id(Integer.parseInt(txtId.getText()));
+        } catch (Exception ex) {
+            System.out.println("Erro no parse do id para int");
+            editora.setEditora_id(0);
+        }
+        editora.setNome(txtNome.getText());
+        editora.setMunicipio(txtMunicipio.getText());
         
         try {
             if (mode.equals("INS")) {
-               autorDAO.save(autor);
+               editoraDAO.save(editora);
             } else if (mode.equals("UPD")) {
-                autorDAO.update(autor);
+                editoraDAO.update(editora);
             }
             
         } catch (SQLException ex) {
@@ -191,12 +214,14 @@ public class AutorForm extends javax.swing.JFrame {
         
         txtId.setText((String) jTable1.getValueAt(row, 0));
         txtNome.setText((String) jTable1.getValueAt(row, 1));
+        txtMunicipio.setText((String) jTable1.getValueAt(row, 2));
         this.mode = "UPD";
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         txtId.setText("");
         txtNome.setText("");
+        txtMunicipio.setText("");
         this.mode = "INS";
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -205,14 +230,18 @@ public class AutorForm extends javax.swing.JFrame {
         if (row != -1) {
             DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
             int id = Integer.parseInt((String) modelo.getValueAt(row, 0));
-            Autor autor = new Autor();
+            Editora editora = new Editora();
 
-            autor.setAutor_id(id);
+            editora.setEditora_id(id);
 
-            autorDAO.delete(autor);
+            editoraDAO.delete(editora);
         }
         listar();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMunicipioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMunicipioActionPerformed
 
     public void listar() {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
@@ -220,10 +249,11 @@ public class AutorForm extends javax.swing.JFrame {
         modelo.setNumRows(0);
         try {
             // Busca lista de objetos
-            for (Autor autor : autorDAO.findAll()) {
-                modelo.addRow(new String[] {""+autor.getAutor_id(), autor.getNome()});
+            for (Editora editora : editoraDAO.findAll()) {
+                modelo.addRow(new String[] {""+editora.getEditora_id(), editora.getNome(), editora.getMunicipio()});
             }
         } catch (Exception ex) {
+            System.out.println("Erro ao listar");
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
@@ -244,35 +274,38 @@ public class AutorForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AutorForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditoraForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AutorForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditoraForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AutorForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditoraForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AutorForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditoraForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AutorForm().setVisible(true);
+                new EditoraForm().setVisible(true);
             }
         });
     }
 
     private String mode = "INS";
-    private AutorDAO autorDAO;
+    private EditoraDAO editoraDAO;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtMunicipio;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

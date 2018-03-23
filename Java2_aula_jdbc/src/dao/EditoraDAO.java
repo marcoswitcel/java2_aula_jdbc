@@ -8,35 +8,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Autor;
+import model.Editora;
 import util.ConnectionJDBC;
 
 /**
  *
  * @author jw004626
  */
-public class AutorDAO {
+public class EditoraDAO {
 
     Connection connection;
 
-    public AutorDAO() throws Exception {
+    public EditoraDAO() throws Exception {
         this.connection = ConnectionJDBC.getConnection();
     }
 
-    public void save(Autor autor) throws SQLException {
-        String SQL = "INSERT INTO AUTOR (NOME) VALUES (?)";
+    public void save(Editora editora) throws SQLException {
+        String SQL = "INSERT INTO EDITORA (NOME, MUNICIPIO) VALUES (?, ?)";
         PreparedStatement p = connection.prepareStatement(SQL);
-        p.setString(1, autor.getNome());
+        p.setString(1, editora.getNome());
+        p.setString(2, editora.getMunicipio());
         p.execute();
     }
 
-    public void update(Autor autor) {
-        String SQL = "UPDATE AUTOR SET NOME = ? WHERE AUTOR_ID = ?;";
+    public void update(Editora editora) {
+        String SQL = "UPDATE EDITORA SET NOME = ?, MUNICIPIO = ? WHERE EDITORA_ID = ?;";
 
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
-            p.setString(1, autor.getNome());
-            p.setInt(2, autor.getAutor_id());
+            p.setString(1, editora.getNome());
+            p.setString(2, editora.getMunicipio());
+            p.setInt(3, editora.getEditora_id());
             p.execute();
             System.out.println("foi");
         } catch (SQLException ex) {
@@ -44,27 +46,29 @@ public class AutorDAO {
         }
     }
 
-    public void delete(Autor autor) {
-        String SQL = "DELETE FROM AUTOR WHERE AUTOR_ID = ?";
+    public void delete(Editora editora) {
+        String SQL = "DELETE FROM EDITORA WHERE EDITORA_ID = ?;";
+
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
-            p.setInt(1, autor.getAutor_id());
+            p.setInt(1, editora.getEditora_id());
             p.execute();
+            System.out.println("foi");
         } catch (SQLException ex) {
-                System.out.println("Erro no delete: Autor");
+            System.out.println("Erro no update");
         }
     }
 
-    public Autor findById(int id) {
-        return new Autor();
+    public Editora findById(int id) {
+        return new Editora();
     }
 
-    public List<Autor> findAll() throws Exception {
+    public List<Editora> findAll() throws Exception {
         // Lista para manter os valores do result set
-        List<Autor> list = new ArrayList<>();
-        Autor autor;
+        List<Editora> list = new ArrayList<>();
+        Editora editora;
 
-        String SQL = "SELECT * FROM AUTOR;";
+        String SQL = "SELECT * FROM EDITORA;";
         try {
             // Prepara a SQL
             PreparedStatement p = connection.prepareStatement(SQL);
@@ -73,11 +77,13 @@ public class AutorDAO {
             // Navega pelos registros no rs
             while (rs.next()) {
                 // Instancia a classe e informa os valores do BD
-                autor = new Autor();
-                autor.setAutor_id(rs.getInt("autor_id"));
-                autor.setNome(rs.getString("nome"));
+                editora = new Editora();
+                editora.setEditora_id(rs.getInt("editora_id"));
+                editora.setNome(rs.getString("nome"));
+                editora.setMunicipio(rs.getString("municipio"));
+                
                 // Inclui na lista
-                list.add(autor);
+                list.add(editora);
             }
             // Fechas  as conexões
             rs.close();
