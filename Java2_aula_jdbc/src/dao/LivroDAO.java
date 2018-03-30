@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Editora;
 import model.Livro;
 import util.ConnectionJDBC;
 
@@ -27,7 +28,7 @@ public class LivroDAO {
         String SQL = "INSERT INTO LIVRO (LIVRO_ID, EDITORA_ID, TITULO, ANO, DESCRICAO) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement p = connection.prepareStatement(SQL);
         p.setInt(1, livro.getLivro_id());
-        p.setInt(2, livro.getEditora_id());
+        p.setInt(2, livro.getEditora().getEditora_id());
         p.setString(3, livro.getTitulo());
         p.setInt(4, livro.getAno());
         p.setString(5, livro.getDescricao());
@@ -35,15 +36,15 @@ public class LivroDAO {
     }
 
     public void update(Livro livro) {
-        String SQL = "UPDATE LIVRO SET TITULO = ?, ANO = ?, DESCRICAO = ? WHERE LIVRO_ID = ? AND EDITORA_ID = ?;";
+        String SQL = "UPDATE LIVRO SET EDITRA_ID = ?, TITULO = ?, ANO = ?, DESCRICAO = ? WHERE LIVRO_ID = ?;";
 
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
-            p.setString(1, livro.getTitulo());
-            p.setInt(2, livro.getAno());
-            p.setString(3, livro.getDescricao());
-            p.setInt(4, livro.getLivro_id());
-            p.setInt(5, livro.getEditora_id());
+            p.setInt(1, livro.getEditora().getEditora_id());
+            p.setString(2, livro.getTitulo());
+            p.setInt(3, livro.getAno());
+            p.setString(4, livro.getDescricao());
+            p.setInt(5, livro.getLivro_id());
             p.execute();
             System.out.println("foi");
         } catch (SQLException ex) {
@@ -52,12 +53,11 @@ public class LivroDAO {
     }
 
     public void delete(Livro livro) {
-        String SQL = "DELETE FROM LIVRO WHERE LIVRO_ID = ? AND EDITORA_ID = ?;";
+        String SQL = "DELETE FROM LIVRO WHERE LIVRO_ID = ?;";
 
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
-            p.setInt(1, livro.getLivro_id());
-            p.setInt(2, livro.getEditora_id());
+            p.setInt(1, livro.getEditora().getEditora_id());
             p.execute();
             System.out.println("foi");
         } catch (SQLException ex) {
@@ -74,7 +74,8 @@ public class LivroDAO {
         List<Livro> list = new ArrayList<>();
         Livro livro;
 
-        String SQL = "SELECT * FROM LIVRO;";
+        String SQL = "SELECT L.*, E.NOME FROM LIVRO L "
+                + "INNER JOIN EDITORA E ON E.EDITORA_ID = L.EDITORA_ID;";
         try {
             // Prepara a SQL
             PreparedStatement p = connection.prepareStatement(SQL);
@@ -85,11 +86,15 @@ public class LivroDAO {
                 // Instancia a classe e informa os valores do BD
                 livro = new Livro();
                 livro.setLivro_id(rs.getInt("livro_id"));
-                livro.setEditora_id(rs.getInt("editora_id"));
                 livro.setTitulo(rs.getString("titulo"));
                 livro.setAno(rs.getInt("ano"));
                 livro.setDescricao(rs.getString("descricao"));
                 
+                Editora editora = new Editora();
+                editora.setEditora_id(rs.getInt("editora_id"));
+                editora.setNome(rs.getString("nome"));
+                
+                livro.setEditora(editora);
                 // Inclui na lista
                 list.add(livro);
             }
