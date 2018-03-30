@@ -32,5 +32,9 @@ public class Editora {
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
     }
-
+    
+    @Override
+    public String toString() {
+        return nome +  " - " + municipio;
+    }
 }
