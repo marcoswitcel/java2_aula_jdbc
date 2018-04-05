@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import model.Editora;
 import model.Livro;
 
@@ -26,14 +27,14 @@ public class LivroForm extends javax.swing.JFrame {
      */
     public LivroForm() {
         initComponents();
-        
+
         try {
             livroDAO = new LivroDAO();
             editoraDAO = new EditoraDAO();
         } catch (Exception ex) {
             JOptionPane.showConfirmDialog(this, ex.getMessage());
         }
-        
+
     }
 
     /**
@@ -48,17 +49,19 @@ public class LivroForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        iID = new javax.swing.JTextField();
         iTitulo = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jTextField4 = new javax.swing.JTextField();
+        iAno = new javax.swing.JTextField();
         cbEditora = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        iDescricao = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -85,21 +88,48 @@ public class LivroForm extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Código", "Editora", "Título", "Ano"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         cbEditora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        iDescricao.setColumns(20);
+        iDescricao.setRows(5);
+        jScrollPane2.setViewportView(iDescricao);
 
         jButton1.setText("Salvar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Novo");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Remover");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -123,13 +153,13 @@ public class LivroForm extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(iAno, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cbEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(iID, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -139,6 +169,10 @@ public class LivroForm extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2)
+                .addGap(42, 42, 42)
                 .addComponent(jButton1)
                 .addGap(37, 37, 37))
         );
@@ -148,7 +182,7 @@ public class LivroForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(cbEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -156,7 +190,7 @@ public class LivroForm extends javax.swing.JFrame {
                     .addComponent(iTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(iAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -165,7 +199,10 @@ public class LivroForm extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addComponent(jLabel4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -175,19 +212,72 @@ public class LivroForm extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         loadComboBox();
+        loadTabela();
     }//GEN-LAST:event_formWindowOpened
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Livro livro = new Livro();
+        try {
+            livro.setLivro_id(Integer.parseInt(iID.getText()));
+        } catch (NumberFormatException ex) {
+            livro.setLivro_id(0);
+            System.out.println("Salvar/Inserir: " + ex.getMessage());
+        }
+        
         livro.setTitulo(iTitulo.getText());
         livro.setEditora((Editora) cbEditora.getSelectedItem());
-        
+        livro.setAno(Integer.parseInt(iAno.getText()));
+        livro.setDescricao(iDescricao.getText());
+
         try {
-            livroDAO.save(livro);
+            if (mode.equals("INS")) {
+                livroDAO.save(livro);
+            } else if (mode.equals("UPD")) {
+                livroDAO.update(livro);
+            }
         } catch (Exception e) {
             JOptionPane.showConfirmDialog(this, e.getMessage());
         }
+        limpaCampos();
+        loadTabela();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        String id = (String) jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+        int livro_id = Integer.parseInt(id);
+
+        try {
+            Livro livro = livroDAO.findById(livro_id);
+            iID.setText("" + livro_id);
+            iTitulo.setText(livro.getTitulo());
+            iAno.setText("" + livro.getAno());
+            iDescricao.setText(livro.getDescricao());
+
+            cbEditora.getModel().setSelectedItem(livro.getEditora());
+        } catch (Exception ex) {
+            Logger.getLogger(LivroForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.mode = "UPD";
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        limpaCampos();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int row = jTable1.getSelectedRow();
+        if (row != -1) {
+            DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+            int id = Integer.parseInt((String) modelo.getValueAt(row, 0));
+            Livro livro = new Livro();
+
+            livro.setLivro_id(id);
+
+            livroDAO.delete(livro);
+        }
+        limpaCampos();
+        loadComboBox();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,6 +314,16 @@ public class LivroForm extends javax.swing.JFrame {
         });
     }
 
+    public void limpaCampos() {
+        iID.setText("");
+        iTitulo.setText("");
+        iAno.setText("");
+        iDescricao.setText("");
+        
+        // Muda para insert
+        this.mode = "INS";
+    }
+
     private void loadComboBox() {
         try {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Vector(editoraDAO.findAll()));
@@ -232,13 +332,39 @@ public class LivroForm extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-    
+
+    private void loadTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+
+        modelo.setNumRows(0);
+
+        try {
+            for (Livro livro : livroDAO.findAll()) {
+                String[] linha = {
+                    "" + livro.getLivro_id(),
+                    livro.getEditora().getNome(),
+                    livro.getTitulo(),
+                    "" + livro.getAno()
+                };
+                modelo.addRow(linha);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(LivroForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private String mode = "INS";
     private LivroDAO livroDAO;
     private EditoraDAO editoraDAO;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbEditora;
+    private javax.swing.JTextField iAno;
+    private javax.swing.JTextArea iDescricao;
+    private javax.swing.JTextField iID;
     private javax.swing.JTextField iTitulo;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -247,8 +373,5 @@ public class LivroForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }

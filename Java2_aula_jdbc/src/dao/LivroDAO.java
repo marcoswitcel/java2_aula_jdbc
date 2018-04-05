@@ -25,18 +25,17 @@ public class LivroDAO {
     }
 
     public void save(Livro livro) throws SQLException {
-        String SQL = "INSERT INTO LIVRO (LIVRO_ID, EDITORA_ID, TITULO, ANO, DESCRICAO) VALUES (?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO LIVRO (EDITORA_ID, TITULO, ANO, DESCRICAO) VALUES (?, ?, ?, ?)";
         PreparedStatement p = connection.prepareStatement(SQL);
-        p.setInt(1, livro.getLivro_id());
-        p.setInt(2, livro.getEditora().getEditora_id());
-        p.setString(3, livro.getTitulo());
-        p.setInt(4, livro.getAno());
-        p.setString(5, livro.getDescricao());
+        p.setInt(1, livro.getEditora().getEditora_id());
+        p.setString(2, livro.getTitulo());
+        p.setInt(3, livro.getAno());
+        p.setString(4, livro.getDescricao());
         p.execute();
     }
 
     public void update(Livro livro) {
-        String SQL = "UPDATE LIVRO SET EDITRA_ID = ?, TITULO = ?, ANO = ?, DESCRICAO = ? WHERE LIVRO_ID = ?;";
+        String SQL = "UPDATE LIVRO SET EDITORA_ID = ?, TITULO = ?, ANO = ?, DESCRICAO = ? WHERE LIVRO_ID = ?;";
 
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
@@ -48,7 +47,7 @@ public class LivroDAO {
             p.execute();
             System.out.println("foi");
         } catch (SQLException ex) {
-            System.out.println("Erro no update");
+            System.out.println("Erro no update" + ex.getMessage());
         }
     }
 
@@ -57,16 +56,50 @@ public class LivroDAO {
 
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
-            p.setInt(1, livro.getEditora().getEditora_id());
+            p.setInt(1, livro.getLivro_id());
             p.execute();
             System.out.println("foi");
         } catch (SQLException ex) {
-            System.out.println("Erro no update");
+            System.out.println("Erro no update" + ex.getMessage());
         }
     }
 
-    public Livro findById(int id) {
-        return new Livro();
+    public Livro findById(int id) throws Exception {
+
+        Livro livro = new Livro();
+
+        String SQL = "SELECT L.*, E.NOME FROM LIVRO L "
+                + "INNER JOIN EDITORA E ON E.EDITORA_ID = L.EDITORA_ID "
+                + "WHERE LIVRO_ID = ?;";
+        try {
+            // Prepara a SQL
+            PreparedStatement p = connection.prepareStatement(SQL);
+            p.setInt(1, id);
+            // Executa a SQL e armazena os valores no ResultSet rs
+            ResultSet rs = p.executeQuery();
+            // Navega pelos registros no rs
+            while (rs.next()) {
+                // Instancia a classe e informa os valores do BD
+                livro = new Livro();
+                livro.setLivro_id(rs.getInt("livro_id"));
+                livro.setTitulo(rs.getString("titulo"));
+                livro.setAno(rs.getInt("ano"));
+                livro.setDescricao(rs.getString("descricao"));
+
+                Editora editora = new Editora();
+                editora.setEditora_id(rs.getInt("editora_id"));
+                editora.setNome(rs.getString("nome"));
+
+                livro.setEditora(editora);
+            }
+            // Fechas  as conexões
+            rs.close();
+            p.close();
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        }
+
+        return livro;
     }
 
     public List<Livro> findAll() throws Exception {
@@ -89,11 +122,11 @@ public class LivroDAO {
                 livro.setTitulo(rs.getString("titulo"));
                 livro.setAno(rs.getInt("ano"));
                 livro.setDescricao(rs.getString("descricao"));
-                
+
                 Editora editora = new Editora();
                 editora.setEditora_id(rs.getInt("editora_id"));
                 editora.setNome(rs.getString("nome"));
-                
+
                 livro.setEditora(editora);
                 // Inclui na lista
                 list.add(livro);
