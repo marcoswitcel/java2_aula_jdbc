@@ -69,7 +69,7 @@ public class EstudanteDAO {
         List<Estudante> list = new ArrayList<>();
         Estudante estudante;
 
-        String SQL = "SELECT * FROM EDITORA;";
+        String SQL = "SELECT * FROM ESTUDANTE;";
         try {
             // Prepara a SQL
             PreparedStatement p = connection.prepareStatement(SQL);
@@ -81,7 +81,9 @@ public class EstudanteDAO {
                 estudante = new Estudante();
                 estudante.setEstudante_id(rs.getInt("estudante_id"));
                 estudante.setNome(rs.getString("nome"));
-                estudante.setMunicipio(rs.getString("municipio"));
+                estudante.setCurso(rs.getString("curso"));
+                estudante.setData_matricula(rs.getDate("data_matricula"));
+                estudante.setStatus(rs.getString("status").charAt(0));
                 
                 // Inclui na lista
                 list.add(estudante);
