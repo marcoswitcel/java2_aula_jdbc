@@ -4,15 +4,16 @@
 package model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Emprestimo {
     private int emprestimo_id;
-    private int livro_id;
-    private int estudante_id;
+    private Livro livro;
+    private Estudante estudante;
     private Date data_retirada;
     private Date data_devolucao;
     private Date data_entrega;
-    private char status;
+    private String status;
 
     public int getEmprestimo_id() {
         return emprestimo_id;
@@ -22,20 +23,20 @@ public class Emprestimo {
         this.emprestimo_id = emprestimo_id;
     }
 
-    public int getLivro_id() {
-        return livro_id;
+    public Livro getLivro() {
+        return livro;
     }
 
-    public void setLivro_id(int livro_id) {
-        this.livro_id = livro_id;
+    public void setLivro(Livro livro) {
+        this.livro = livro;
     }
 
-    public int getEstudante_id() {
-        return estudante_id;
+    public Estudante getEstudante() {
+        return estudante;
     }
 
-    public void setEstudante_id(int estudante_id) {
-        this.estudante_id = estudante_id;
+    public void setEstudante(Estudante estudante) {
+        this.estudante = estudante;
     }
 
     public Date getData_retirada() {
@@ -62,11 +63,11 @@ public class Emprestimo {
         this.data_entrega = data_entrega;
     }
 
-    public char getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

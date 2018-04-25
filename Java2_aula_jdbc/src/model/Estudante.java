@@ -52,4 +52,8 @@ public class Estudante {
     public void setStatus(char status) {
         this.status = status;
     }
+    @Override
+    public String toString() {
+        return nome;
+    }
 }
