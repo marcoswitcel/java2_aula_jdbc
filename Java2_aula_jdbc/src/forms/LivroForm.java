@@ -84,6 +84,8 @@ public class LivroForm extends javax.swing.JFrame {
 
         jLabel3.setText("Título");
 
+        iID.setEnabled(false);
+
         jLabel4.setText("Descrição");
 
         jLabel5.setText("Ano");
@@ -163,6 +165,11 @@ public class LivroForm extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        tAutor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tAutorMouseClicked(evt);
             }
         });
         jScrollPane3.setViewportView(tAutor);
@@ -377,10 +384,11 @@ public class LivroForm extends javax.swing.JFrame {
 
     private void bAutorAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAutorAddActionPerformed
         Autor autor = new Autor();
-        Livro livro = new Livro();
-        autor.setAutor_id(Integer.parseInt(autorID.getText()));
-        livro.setLivro_id(Integer.parseInt(iID.getText()));
+        Livro livro;
         try {
+            autor.setAutor_id(Integer.parseInt(autorID.getText()));
+            livro = livroDAO.findById(Integer.parseInt(iID.getText()));
+            
             livroDAO.saveAutorLivro(autor, livro);
             loadTabelaAutores(livro);
         } catch(Exception ex) {
@@ -390,10 +398,10 @@ public class LivroForm extends javax.swing.JFrame {
 
     private void bAutorDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAutorDeleteActionPerformed
         Autor autor = new Autor();
-        Livro livro = new Livro();
-        autor.setAutor_id(Integer.parseInt(autorID.getText()));
-        livro.setLivro_id(Integer.parseInt(iID.getText()));
+        Livro livro;
         try {
+            autor.setAutor_id(Integer.parseInt(autorID.getText()));
+            livro = livroDAO.findById(Integer.parseInt(iID.getText()));
             livroDAO.deleteAutorLivro(autor, livro);
             loadTabelaAutores(livro);
         } catch(Exception ex) {
@@ -404,6 +412,12 @@ public class LivroForm extends javax.swing.JFrame {
     private void cbEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEditoraActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbEditoraActionPerformed
+
+    private void tAutorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tAutorMouseClicked
+        DefaultTableModel model = (DefaultTableModel) tAutor.getModel();
+        int row = tAutor.getSelectedRow();
+        autorID.setText((String) tAutor.getValueAt(row, 0));
+    }//GEN-LAST:event_tAutorMouseClicked
 
     /**
      * @param args the command line arguments
@@ -459,6 +473,8 @@ public class LivroForm extends javax.swing.JFrame {
         iAno.setText("");
         iDescricao.setText("");
         
+        DefaultTableModel modelo = (DefaultTableModel) tAutor.getModel();
+        modelo.setNumRows(0);
         // Muda para insert
         this.mode = "INS";
     }
