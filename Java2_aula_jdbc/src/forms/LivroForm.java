@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.Autor;
 import model.Editora;
 import model.Livro;
 
@@ -114,6 +115,11 @@ public class LivroForm extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         cbEditora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbEditora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbEditoraActionPerformed(evt);
+            }
+        });
 
         iDescricao.setColumns(20);
         iDescricao.setRows(5);
@@ -171,10 +177,18 @@ public class LivroForm extends javax.swing.JFrame {
         });
 
         bAutorAdd.setText("Add");
-        bAutorAdd.setEnabled(false);
+        bAutorAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAutorAddActionPerformed(evt);
+            }
+        });
 
         bAutorDelete.setText("Del");
-        bAutorDelete.setEnabled(false);
+        bAutorDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAutorDeleteActionPerformed(evt);
+            }
+        });
 
         bAutorSalva.setText("Salvar");
 
@@ -329,6 +343,7 @@ public class LivroForm extends javax.swing.JFrame {
             iDescricao.setText(livro.getDescricao());
 
             cbEditora.getModel().setSelectedItem(livro.getEditora());
+            loadTabelaAutores(livro);
         } catch (Exception ex) {
             Logger.getLogger(LivroForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -359,6 +374,36 @@ public class LivroForm extends javax.swing.JFrame {
         dialog.setVisible(true);
         autorID.setText("" + dialog.getAutor_id());
     }//GEN-LAST:event_bAutorBuscarActionPerformed
+
+    private void bAutorAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAutorAddActionPerformed
+        Autor autor = new Autor();
+        Livro livro = new Livro();
+        autor.setAutor_id(Integer.parseInt(autorID.getText()));
+        livro.setLivro_id(Integer.parseInt(iID.getText()));
+        try {
+            livroDAO.saveAutorLivro(autor, livro);
+            loadTabelaAutores(livro);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_bAutorAddActionPerformed
+
+    private void bAutorDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAutorDeleteActionPerformed
+        Autor autor = new Autor();
+        Livro livro = new Livro();
+        autor.setAutor_id(Integer.parseInt(autorID.getText()));
+        livro.setLivro_id(Integer.parseInt(iID.getText()));
+        try {
+            livroDAO.deleteAutorLivro(autor, livro);
+            loadTabelaAutores(livro);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }//GEN-LAST:event_bAutorDeleteActionPerformed
+
+    private void cbEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEditoraActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbEditoraActionPerformed
 
     /**
      * @param args the command line arguments
@@ -395,6 +440,19 @@ public class LivroForm extends javax.swing.JFrame {
         });
     }
 
+    private void loadTabelaAutores(Livro livro) throws Exception {
+        DefaultTableModel modelo = (DefaultTableModel) tAutor.getModel();
+        modelo.setNumRows(0);
+        
+        for (Autor autor : livro.getAutores()) {
+            String [] linha = {
+                "" + autor.getAutor_id(),
+                autor.getNome()
+            };
+            modelo.addRow(linha);
+        }
+    }
+    
     public void limpaCampos() {
         iID.setText("");
         iTitulo.setText("");
